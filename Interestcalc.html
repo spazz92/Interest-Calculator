@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Interest Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom cursor styles */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4f46e5;
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+        
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(79, 70, 229, 0.5);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease-out;
+        }
+        
+        .click-effect {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(79, 70, 229, 0.5);
+            pointer-events: none;
+            z-index: 9997;
+            transform: translate(-50%, -50%) scale(0);
+            animation: clickAnimation 0.5s ease-out;
+        }
+        
+        @keyframes clickAnimation {
+            to {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+        
+        /* Parallax effect */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        /* Gradient animation */
+        .gradient-bg {
+            background: linear-gradient(-45deg, #4f46e5, #8b5cf6, #ec4899, #f43f5e);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Input focus effect */
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+    <!-- Custom cursor elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    
+    <!-- Parallax hero section -->
+    <div class="parallax-bg gradient-bg relative overflow-hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div class="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
+                    <span class="inline-block transform hover:scale-110 transition duration-300">💰</span> 
+                    Interest Calculator 
+                    <span class="inline-block transform hover:scale-110 transition duration-300">📈</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-100 mb-10 max-w-3xl mx-auto">
+                    Calculate your potential earnings with our interactive tool. Plan your financial future today!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Calculator section -->
+    <div class="py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center mb-8">
+                        <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-calculator text-indigo-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800">Interest Calculator</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Input fields -->
+                        <div>
+                            <div class="mb-6">
+                                <label for="principal" class="block text-sm font-medium text-gray-700 mb-2">Principal Amount ($)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500">$</span>
+                                    </div>
+                                    <input type="number" id="principal" class="input-focus pl-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4 border" placeholder="1000" min="0" step="0.01">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="rate" class="block text-sm font-medium text-gray-700 mb-2">Interest Rate (%)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500">%</span>
+                                    </div>
+                                    <input type="number" id="rate" class="input-focus block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4 border" placeholder="5" min="0" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="mb-6">
+                                <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <input type="number" id="time" class="input-focus block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4 border" placeholder="1" min="0" step="0.5">
+                                    </div>
+                                    <div>
+                                        <select id="timeUnit" class="input-focus block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4 border">
+                                            <option value="years">Years</option>
+                                            <option value="months">Months</option>
+                                            <option value="days">Days</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="compound" class="block text-sm font-medium text-gray-700 mb-2">Compound Frequency</label>
+                                <select id="compound" class="input-focus block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4 border">
+                                    <option value="1">Annually</option>
+                                    <option value="2">Semi-Annually</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="12">Monthly</option>
+                                    <option value="365">Daily</option>
+                                    <option value="0">Simple Interest</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 flex flex-col sm:flex-row justify-between items-center">
+                        <button id="calculateBtn" class="w-full sm:w-auto mb-4 sm:mb-0 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-8 rounded-md shadow-sm transform hover:scale-105 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-calculator mr-2"></i> Calculate
+                        </button>
+                        <button id="resetBtn" class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-8 rounded-md shadow-sm transform hover:scale-105 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-redo mr-2"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results section -->
+            <div id="results" class="mt-10 bg-white rounded-xl shadow-lg overflow-hidden card-hover hidden">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800">Your Results</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-indigo-50 rounded-lg p-6 text-center">
+                            <div class="text-indigo-600 mb-2">
+                                <i class="fas fa-coins text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-1">Total Interest</h3>
+                            <p id="totalInterest" class="text-2xl font-bold text-indigo-700">$0.00</p>
+                        </div>
+                        
+                        <div class="bg-green-50 rounded-lg p-6 text-center">
+                            <div class="text-green-600 mb-2">
+                                <i class="fas fa-piggy-bank text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-1">Total Amount</h3>
+                            <p id="totalAmount" class="text-2xl font-bold text-green-700">$0.00</p>
+                        </div>
+                        
+                        <div class="bg-purple-50 rounded-lg p-6 text-center">
+                            <div class="text-purple-600 mb-2">
+                                <i class="fas fa-calendar-alt text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-1">Time Period</h3>
+                            <p id="timePeriod" class="text-xl font-bold text-purple-700">0 Years</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Growth Visualization</h3>
+                        <div class="bg-gray-100 rounded-lg p-4 h-64 flex items-end">
+                            <div id="growthChart" class="w-full h-48 flex items-end justify-between">
+                                <!-- Chart bars will be inserted here by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Parallax info section -->
+    <div class="parallax-bg bg-gray-200 py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Understanding Interest</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Learn how interest works and how it can help grow your savings over time.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <div class="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Simple Interest</h3>
+                    <p class="text-gray-600">
+                        Calculated only on the original principal amount. Formula: 
+                        <span class="font-mono bg-gray-100 px-2 py-1 rounded">I = P × r × t</span>
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <div class="bg-purple-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-bar text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Compound Interest</h3>
+                    <p class="text-gray-600">
+                        Calculated on principal plus accumulated interest. Formula: 
+                        <span class="font-mono bg-gray-100 px-2 py-1 rounded">A = P(1 + r/n)^(nt)</span>
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <div class="bg-green-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <i class="fas fa-lightbulb text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Key Factors</h3>
+                    <ul class="text-gray-600 list-disc pl-5 space-y-1">
+                        <li>Higher principal = More interest</li>
+                        <li>Higher rate = Faster growth</li>
+                        <li>Longer time = Exponential growth</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Interest Calculator</h3>
+                    <p class="text-gray-400">
+                        A powerful tool to help you plan your financial future and understand how interest works.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Calculator</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition text-2xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-2xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-2xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-2xl"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Interest Calculator. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Custom cursor functionality
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            cursorOutline.style.left = `${posX}px`;
+            cursorOutline.style.top = `${posY}px`;
+            cursorOutline.style.transition = 'transform 0.15s ease';
+        });
+        
+        document.addEventListener('click', (e) => {
+            // Create click effect
+            const clickEffect = document.createElement('div');
+            clickEffect.classList.add('click-effect');
+            clickEffect.style.left = `${e.clientX}px`;
+            clickEffect.style.top = `${e.clientY}px`;
+            document.body.appendChild(clickEffect);
+            
+            // Remove the effect after animation completes
+            setTimeout(() => {
+                clickEffect.remove();
+            }, 500);
+            
+            // Cursor click animation
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            setTimeout(() => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 100);
+        });
+        
+        // Interactive elements hover effect
+        const interactiveElements = document.querySelectorAll('button, a, input, select, .card-hover');
+        
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseover', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                cursorOutline.style.backgroundColor = 'rgba(79, 70, 229, 0.2)';
+            });
+            
+            element.addEventListener('mouseout', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+        
+        // Calculator functionality
+        document.getElementById('calculateBtn').addEventListener('click', calculateInterest);
+        document.getElementById('resetBtn').addEventListener('click', resetCalculator);
+        
+        function calculateInterest() {
+            // Get input values
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            const time = parseFloat(document.getElementById('time').value);
+            const timeUnit = document.getElementById('timeUnit').value;
+            const compoundFreq = parseInt(document.getElementById('compound').value);
+            
+            // Validate inputs
+            if (isNaN(principal) || isNaN(rate) || isNaN(time) || principal <= 0 || rate <= 0 || time <= 0) {
+                alert('Please enter valid positive numbers for all fields.');
+                return;
+            }
+            
+            // Convert time to years based on selected unit
+            let timeInYears = time;
+            if (timeUnit === 'months') {
+                timeInYears = time / 12;
+            } else if (timeUnit === 'days') {
+                timeInYears = time / 365;
+            }
+            
+            let totalAmount, totalInterest;
+            
+            if (compoundFreq === 0) {
+                // Simple interest calculation
+                totalInterest = principal * (rate / 100) * timeInYears;
+                totalAmount = principal + totalInterest;
+            } else {
+                // Compound interest calculation
+                totalAmount = principal * Math.pow(1 + (rate / 100) / compoundFreq, compoundFreq * timeInYears);
+                totalInterest = totalAmount - principal;
+            }
+            
+            // Display results
+            document.getElementById('totalInterest').textContent = `$${totalInterest.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
+            
+            // Format time period display
+            let timeDisplay;
+            if (timeUnit === 'years') {
+                timeDisplay = `${time} Year${time !== 1 ? 's' : ''}`;
+            } else if (timeUnit === 'months') {
+                timeDisplay = `${time} Month${time !== 1 ? 's' : ''}`;
+            } else {
+                timeDisplay = `${time} Day${time !== 1 ? 's' : ''}`;
+            }
+            document.getElementById('timePeriod').textContent = timeDisplay;
+            
+            // Show results section
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Generate growth chart
+            generateGrowthChart(principal, rate, timeInYears, compoundFreq);
+        }
+        
+        function resetCalculator() {
+            document.getElementById('principal').value = '';
+            document.getElementById('rate').value = '';
+            document.getElementById('time').value = '1';
+            document.getElementById('timeUnit').value = 'years';
+            document.getElementById('compound').value = '1';
+            document.getElementById('results').classList.add('hidden');
+        }
+        
+        function generateGrowthChart(principal, rate, timeInYears, compoundFreq) {
+            const growthChart = document.getElementById('growthChart');
+            growthChart.innerHTML = '';
+            
+            const steps = 5; // Number of bars to show
+            const stepSize = timeInYears / steps;
+            
+            for (let i = 1; i <= steps; i++) {
+                const currentTime = stepSize * i;
+                let currentAmount;
+                
+                if (compoundFreq === 0) {
+                    // Simple interest
+                    currentAmount = principal + (principal * (rate / 100) * currentTime);
+                } else {
+                    // Compound interest
+                    currentAmount = principal * Math.pow(1 + (rate / 100) / compoundFreq, compoundFreq * currentTime);
+                }
+                
+                // Calculate bar height (max 90% of container height)
+                const barHeight = (currentAmount / (principal * 2)) * 90;
+                const barHeightPx = `${Math.min(barHeight, 90)}%`;
+                
+                // Create bar element
+                const bar = document.createElement('div');
+                bar.className = 'bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 flex flex-col items-center';
+                bar.style.width = '15%';
+                bar.style.height = barHeightPx;
+                
+                // Add tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = 'bg-gray-800 text-white text-xs rounded px-2 py-1 mb-1 opacity-0 group-hover:opacity-100 transition';
+                tooltip.textContent = `Year ${currentTime.toFixed(1)}: $${currentAmount.toFixed(2)}`;
+                
+                const barInner = document.createElement('div');
+                barInner.className = 'w-full h-full rounded-t';
+                
+                bar.appendChild(tooltip);
+                bar.appendChild(barInner);
+                growthChart.appendChild(bar);
+            }
+        }
+        
+        // Parallax effect on scroll
+        window.addEventListener('scroll', function() {
+            const parallaxElements = document.querySelectorAll('.parallax-bg');
+            const scrollPosition = window.pageYOffset;
+            
+            parallaxElements.forEach(function(element) {
+                element.style.backgroundPositionY = (scrollPosition * 0.5) + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
